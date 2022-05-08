@@ -19,8 +19,10 @@
             <div class="list-group list-group-flush mx-3 mt-4">
                 <h3><span class="text-white mx-3">Conversations</span></h3>
                 <ul id="conversations">
-                    <li><a href="#" class="list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent">
-                        <button class="btn secondary_c text-white">Person2</button></a>
+                    <li><a href="#"
+                           class="list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent">
+                        <button class="btn secondary_c text-white">Person2</button>
+                    </a>
                     </li>
                 </ul>
             </div>
@@ -40,7 +42,7 @@
             <div class="modal-content bg-dark">
                 <div class="modal-header" style="border-bottom: 1px solid #303136">
                     <h5 class="modal-title text-white" id="searchModalLabel">Find a Friend</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button onclick="closeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true" class="text-white">&times;</span>
                     </button>
                 </div>
@@ -58,7 +60,8 @@
                     </form>
                 </div>
                 <div class="modal-footer" style="border-top: 1px solid #303136">
-                    <button type="button" id="add" class="btn btn-secondary" onclick="addConversation()" data-dismiss="modal">Add</button>
+                    <h4 class="text-danger ml-auto" id="alert"></h4>
+                    <button type="button" id="add" class="btn btn-secondary" onclick="addConversation()">Add</button>
                 </div>
             </div>
         </div>
@@ -206,13 +209,23 @@
     }
 </script>
 <script>
-    function addConversation(){
+    function closeModal() {
+        document.getElementById("alert").innerText = "";
+        document.getElementById("addField").value = "";
+    }
+
+    function addConversation() {
         let friend = document.getElementById("addField").value;
-        if (friend.length !== 0){
+        let reg = new RegExp('^.*.#[0-9]{4}$')
+        if (friend.length !== 0 && reg.test(friend)) {
+            $('#searchModal').modal('hide');
+
             document.getElementById("conversations").innerHTML += "<li><a href='#' className='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><button class='btn secondary_c text-white' id='tmp'></button></a></li>";
             document.getElementById("tmp").innerText = friend;
             document.getElementById("tmp").removeAttribute("id");
-            document.getElementById("addField").value = "";
+            closeModal()
+        } else {
+            document.getElementById("alert").innerText = "Invalid input!";
         }
     }
 </script>
