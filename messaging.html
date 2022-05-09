@@ -9,11 +9,13 @@
     <link rel="stylesheet" href="css/bootstrap.css"/>
     <link rel="icon" type="image/x-icon" href="/images/logo.png">
     <link rel="stylesheet" href="css/messaging.css"/>
+    <script src="js/jquery-3.6.0.js"></script>
+    <script src="js/bootstrap.js"></script>
 </head>
 
 <body>
 
-<div class="wrapper">
+<div>
     <nav id="sidebar" class="secondary_c">
         <div class="position-sticky">
             <div class="list-group list-group-flush mx-3 mt-4">
@@ -83,11 +85,11 @@
                               d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
                     </svg>
                 </a>
-                <form class="d-none d-sm-flex input-group w-auto my-auto">
+                <form class="input-group w-auto my-auto">
                     <input
                             autocomplete="off"
                             type="search"
-                            class="form-control rounded text-white"
+                            class="form-control rounded text-white border-dark"
                             placeholder='Search'
                             style="min-width: 225px;background-color: #444"
                     />
@@ -169,15 +171,11 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
         integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
         crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
-        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-        crossorigin="anonymous"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
 <script type="text/javascript">
@@ -197,11 +195,37 @@
     });
 </script>
 <script>
+    /*
     function appendMessages() {
         let message = document.getElementById("messagebox").value;
         if (message.length !== 0) {
             document.getElementById("messages").innerHTML += "<p class='text-white wrap' id='tmp'><\p>";
             document.getElementById("tmp").innerText = message;
+            document.getElementById("tmp").removeAttribute("id");
+            document.getElementById("messagebox").value = "";
+            $(document).scrollTop($(document).height());
+        }
+    }
+   */
+
+    function appendMessages() {
+        let message = document.getElementById("messagebox").value;
+        if (message.length !== 0) {
+            let returnData = [];
+            $.ajax({
+                type: "POST",
+                url: "php/message_handler.php",
+                datatype: 'json',
+                async: false,
+                data: {
+                    message: message
+                },
+                success: function (data) {
+                    returnData = JSON.parse(data);
+                }
+            });
+            document.getElementById("messages").innerHTML += "<p class='text-white wrap' id='tmp'><\p>";
+            document.getElementById("tmp").innerText = returnData[0];
             document.getElementById("tmp").removeAttribute("id");
             document.getElementById("messagebox").value = "";
             $(document).scrollTop($(document).height());
@@ -220,8 +244,22 @@
         if (friend.length !== 0 && reg.test(friend)) {
             $('#searchModal').modal('hide');
 
+            let returnData = [];
+            $.ajax({
+                type: "POST",
+                url: "php/add_handler.php",
+                datatype: 'json',
+                async: false,
+                data: {
+                    username: friend
+                },
+                success: function (data) {
+                    returnData = JSON.parse(data);
+                }
+            });
+
             document.getElementById("conversations").innerHTML += "<li><a href='#' className='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><button class='btn secondary_c text-white' id='tmp'></button></a></li>";
-            document.getElementById("tmp").innerText = friend;
+            document.getElementById("tmp").innerText = returnData[0];
             document.getElementById("tmp").removeAttribute("id");
             closeModal()
         } else {
