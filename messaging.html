@@ -20,13 +20,7 @@
         <div class="position-sticky">
             <div class="list-group list-group-flush mx-3 mt-4">
                 <h3><span class="text-white mx-3">Conversations</span></h3>
-                <ul id="conversations">
-                    <li><a href="#"
-                           class="list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent">
-                        <button class="btn secondary_c text-white">Person2</button>
-                    </a>
-                    </li>
-                </ul>
+                <ul id="conversations"></ul>
             </div>
             <ul class="list-unstyled CTAs">
                 <li>
@@ -56,13 +50,14 @@
                                 type="search"
                                 maxlength="20"
                                 class="form-control rounded text-white"
-                                placeholder='Enter a Name#0000'
+                                placeholder='Enter a Username'
                                 style="min-width: 225px;background-color: #444"
                         />
                     </form>
                 </div>
                 <div class="modal-footer" style="border-top: 1px solid #303136">
                     <h4 class="text-danger ml-auto" id="alert"></h4>
+                    <button type="button" id="group" class="btn btn-secondary" onclick="addConversation()">Create Group</button>
                     <button type="button" id="add" class="btn btn-secondary" onclick="addConversation()">Add</button>
                 </div>
             </div>
@@ -85,15 +80,30 @@
                               d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
                     </svg>
                 </a>
-                <form class="input-group w-auto my-auto">
-                    <input
-                            autocomplete="off"
-                            type="search"
-                            class="form-control rounded text-white border-dark"
-                            placeholder='Search'
-                            style="min-width: 225px;background-color: #444"
-                    />
-                </form>
+
+                <div>
+                    <span class="text-white w-auto my-auto" id="user"></span>
+                    <a href="login.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="indianRed"
+                         class="bi bi-box-arrow-right" viewBox="0 0 16 16" style="cursor: pointer;" onclick='document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });'>
+                        <path fill-rule="evenodd"
+                              d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                        <path fill-rule="evenodd"
+                              d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                    </svg>
+                    </a>
+                </div>
+                <!--
+                                <form class="input-group w-auto my-auto">
+                                    <input
+                                            autocomplete="off"
+                                            type="search"
+                                            class="form-control rounded text-white border-dark"
+                                            placeholder='Search'
+                                            style="min-width: 225px;background-color: #444"
+                                    />
+                                </form>
+                                -->
             </div>
         </nav>
         <div id="messages">
@@ -161,7 +171,8 @@
         <div class="line"></div>
         <footer class="footer my-3">
             <div class="input-group my-3">
-                <textarea class="form-control text-white border-dark" id="messagebox" rows="2" maxlength="250"
+                <textarea class="form-control text-white border-dark" id="messagebox" placeholder="Messaging Person2"
+                          rows="2" maxlength="250"
                           style="resize: none; background-color: #444; overflow:hidden;"></textarea>
                 <div class="input-group-append">
                     <button class="btn btn-dark btn-outline-info" onclick="appendMessages()"> Send</button>
@@ -190,24 +201,8 @@
             $('a[aria-expanded=true]').attr('aria-expanded', 'false');
         });
     });
-    $(function () {
-        $(document).scrollTop($(document).height());
-    });
 </script>
 <script>
-    /*
-    function appendMessages() {
-        let message = document.getElementById("messagebox").value;
-        if (message.length !== 0) {
-            document.getElementById("messages").innerHTML += "<p class='text-white wrap' id='tmp'><\p>";
-            document.getElementById("tmp").innerText = message;
-            document.getElementById("tmp").removeAttribute("id");
-            document.getElementById("messagebox").value = "";
-            $(document).scrollTop($(document).height());
-        }
-    }
-   */
-
     function appendMessages() {
         let message = document.getElementById("messagebox").value;
         if (message.length !== 0) {
@@ -215,21 +210,39 @@
             $.ajax({
                 type: "POST",
                 url: "php/message_handler.php",
-                datatype: 'json',
                 async: false,
                 data: {
                     message: message
                 },
                 success: function (data) {
-                    returnData = JSON.parse(data);
+                    returnData = data;
                 }
             });
             document.getElementById("messages").innerHTML += "<p class='text-white wrap' id='tmp'><\p>";
-            document.getElementById("tmp").innerText = returnData[0];
+            document.getElementById("tmp").innerText = returnData;
             document.getElementById("tmp").removeAttribute("id");
             document.getElementById("messagebox").value = "";
             $(document).scrollTop($(document).height());
         }
+    }
+</script>
+<script>
+    function getMessages(id) {
+        let returnData = [];
+        $.ajax({
+            type: "POST",
+            url: "php/message_handler.php",
+            async: false,
+            data: {
+                id: id,
+                get_message: 1
+            },
+            success: function (data) {
+                console.log(data)
+                returnData = data;
+            }
+        });
+
     }
 </script>
 <script>
@@ -240,8 +253,7 @@
 
     function addConversation() {
         let friend = document.getElementById("addField").value;
-        let reg = new RegExp('^.*.#[0-9]{4}$')
-        if (friend.length !== 0 && reg.test(friend)) {
+        if (friend.length !== 0) {
             $('#searchModal').modal('hide');
 
             let returnData = [];
@@ -265,6 +277,30 @@
         } else {
             document.getElementById("alert").innerText = "Invalid input!";
         }
+    }
+</script>
+<script>
+    window.onload = function () {
+        let returnData = [];
+        $.ajax({
+            type: "POST",
+            url: "php/message_handler.php",
+            async: false,
+            data: {
+                load: 1
+            },
+            success: function (data) {
+                returnData = JSON.parse(data);
+            }
+        });
+        for (let i in returnData) {
+            if (i === "0") {
+                document.getElementById("user").innerText = returnData[i];
+            } else {
+                document.getElementById("conversations").innerHTML += "<li class='conversation_btn' onclick='getMessages(" + i + ")'><a class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><div class='secondary_c text-white'>" + returnData[i] + "</div></a>";
+            }
+        }
+        $(document).scrollTop($(document).height());
     }
 </script>
 </body>

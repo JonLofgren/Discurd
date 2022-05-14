@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/styles.css"/>
     <script src="js/jquery-3.6.0.js"></script>
 </head>
-<body>
+<body style="background-color: #eee;">
 <header style="position: sticky; top: 0; z-index: 5; width: 100%;">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="mr-auto order-0">
@@ -25,7 +25,7 @@
         </div>
     </nav>
 </header>
-<section class="vh-100" style="background-color: #eee;">
+<section class="vh-100">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-lg-12 col-xl-11">
@@ -38,7 +38,7 @@
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input type="text" id="username" class="form-control"/>
+                                            <input type="text" id="username" autocomplete="off" class="form-control"/>
                                             <label class="form-label" for="username">Username</label>
                                         </div>
                                     </div>
@@ -58,26 +58,14 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-check d-flex justify-content-center mb-5 needs-validation">
-                                        <label class="form-check-label" for="checkbox">
-                                            <input class="form-check-input me-2" type="checkbox" value=""
-                                                   id="checkbox"/>
-                                            I agree all statements in <a href="http://classics.mit.edu/Tzu/artwar.html">Terms
-                                            of service</a>
-                                        </label>
+                                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4 m-5">
+                                        <button type="button" class="btn btn-dark btn-lg btn-block" onclick="register()">Register</button>
                                     </div>
-
-                                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                        <button type="button" class="btn btn-primary btn-lg" onclick="register()">Register</button>
-                                    </div>
-
                                 </form>
-
                             </div>
                             <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                                     class="img-fluid d-none d-md-block" alt="">
+                                <img src="images/signup.jpg"
+                                     class="img-fluid d-none d-md-block rounded" width="400" alt="">
                             </div>
                         </div>
                     </div>
@@ -92,10 +80,10 @@
         let password = document.getElementById("password").value;
         let repeat = document.getElementById("repeat").value;
 
+
         if ((password !== repeat) || password.length === 0){
             document.getElementById("password").className += " border-danger";
             document.getElementById("repeat").className += " border-danger";
-
             return false
         } else {
             document.getElementById("password").className = "form-control";
@@ -112,16 +100,19 @@
                 password: password
             },
             success: function (data) {
-                console.log(data);
                 returnData = parseInt(data);
             }
         });
         if (returnData) {
             document.getElementById("username").className = "form-control";
+            window.location.href = "login.html";
         } else {
             document.getElementById("username").className += " border-danger";
         }
     }
+</script>
+<script>
+    document.getElementById("checkbox").addEventListener("click", _ => document.getElementById("checkbox").style.boxShadow = "none");
 </script>
 </body>
 </html>

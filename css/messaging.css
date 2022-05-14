@@ -76,6 +76,10 @@ ul.CTAs a {
     width: 100%;
 }
 
+.conversation_btn:hover {
+    cursor: pointer;
+}
+
 @media (max-width: 768px) {
     #sidebar {
         margin-left: -250px;

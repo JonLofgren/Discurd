@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="css/bootstrap.css"/>
     <link rel="icon" type="image/x-icon" href="/images/logo.png">
     <link rel="stylesheet" href="css/styles.css"/>
+    <script src="js/jquery-3.6.0.js"></script>
 </head>
-<body>
+<body style="background-color: #eee">
 <header style="position: sticky; top: 0; z-index: 5; width: 100%;">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="mr-auto order-0">
@@ -24,21 +25,19 @@
         </div>
     </nav>
 </header>
-<section class="vh-100" style="background-color: #eee;">
+<section class="vh-100">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col col-xl-10">
                 <div class="card" style="border-radius: 1rem;">
                     <div class="row g-0">
                         <div class="col-md-6 col-lg-5 d-none d-md-block">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
+                            <img src="images/login.jpg"
                                  alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;"/>
                         </div>
                         <div class="col-md-6 col-lg-7 d-flex align-items-center">
                             <div class="card-body p-4 p-lg-5 text-black">
-
                                 <form>
-
                                     <div class="d-flex align-items-center mb-3 pb-1">
                                         <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
                                         <span class="h1 fw-bold mb-0"><img src="images/logo.png" alt="" width="60"> Discurd</span>
@@ -47,24 +46,24 @@
                                     <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your
                                         account</h5>
 
-                                    <div class="form-outline mb-4">
-                                        <input type="text" id="form2Example17" class="form-control form-control-lg"/>
-                                        <label class="form-label" for="form2Example17">Username</label>
-                                    </div>
+                                    <span class="text-danger" id="incorrect"></span>
 
                                     <div class="form-outline mb-4">
-                                        <input type="password" id="form2Example27"
+                                        <input type="text" id="username" autocomplete="off" class="form-control form-control-lg"/>
+                                        <label class="form-label" for="username">Username</label>
+                                    </div>
+
+                                    <div class="form-outline mb-3">
+                                        <input type="password" id="password"
                                                class="form-control form-control-lg"/>
-                                        <label class="form-label" for="form2Example27">Password</label>
+                                        <label class="form-label" for="password">Password</label>
                                     </div>
 
                                     <div class="pt-1 mb-4">
-                                        <a href="messaging.html">
-                                            <button class="btn btn-dark btn-lg btn-block" type="button">Login</button>
-                                        </a>
+                                            <button class="btn btn-dark btn-lg btn-block" type="button" onclick="signIn()">Login</button>
                                     </div>
-                                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a
-                                            href="account.html"
+                                    <p class="pb-lg-2" style="color: #393f81;">Don't have an account? <a
+                                            href="signup.html"
                                             style="color: #393f81;">Register here</a></p>
                                 </form>
                             </div>
@@ -75,6 +74,38 @@
         </div>
     </div>
 </section>
-<script src="js/bootstrap.js"></script>
+
+<script>
+    function signIn (){
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        if ((username.length > 0) && (password.length > 0)) {
+            let returnData;
+            $.ajax({
+                type: "POST",
+                url: "php/signin.php",
+                async: false,
+                data: {
+                    username: username,
+                    password: password
+                },
+                success: function (data) {
+                    returnData = parseInt(data);
+                }
+            });
+            if (returnData) {
+                window.location.href = 'messaging.html';
+            } else {
+                document.getElementById("incorrect").innerText = "Incorrect username or password";
+                document.getElementById("username").className += " border-danger";
+                document.getElementById("password").className += " border-danger";
+            }
+        } else {
+            document.getElementById("incorrect").innerText = "Incorrect username or password";
+            document.getElementById("username").className += " border-danger";
+            document.getElementById("password").className += " border-danger";
+        }
+    }
+</script>
 </body>
 </html>
