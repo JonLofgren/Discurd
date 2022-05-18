@@ -33,9 +33,9 @@ if(isset($_SESSION['username'])){
                             $date = $datetime[0];
                             $time = $datetime[1];
                             if (isset($prepare_result[$date])) {
-                                array_push($prepare_result[$date][0], $row['s']);
-                                array_push($prepare_result[$date][1], $row['message']);
-                                array_push($prepare_result[$date][2], $time);
+                                $prepare_result[$date][0][] = $row['s'];
+                                $prepare_result[$date][1][] = $row['message'];
+                                $prepare_result[$date][2][] = $time;
                             } else{
                         $prepare_result[$date] = [[$row['s']], [$row['message']], [$time]];
                         }

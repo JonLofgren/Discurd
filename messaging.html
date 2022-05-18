@@ -161,7 +161,7 @@
 
             <h5 class="text-white font-weight-bold">Joe 05/03/22</h5>
             <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque<br> ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, sint!<br>
+                illo ipsam itaque nequ ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, sint!
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita illo libero placeat quas recusandae
                 sequi. Accusantium dolore doloremque expedita explicabo inventore labore numquam rem repellat velit,
                 voluptates! Ad, consectetur culpa cum ipsum iure molestiae molestias officia omnis pariatur quas
@@ -239,7 +239,16 @@
             },
             success: function (data) {
                 console.log(data)
-                returnData = data;
+                returnData = JSON.parse(data);
+                console.log(returnData)
+
+                for (date in returnData) {
+                    for (day in returnData[date]) {
+                        for (value in returnData[date][day]) {
+                            console.log(returnData[date][day][value])
+                        }
+                    }
+                }
             }
         });
 
