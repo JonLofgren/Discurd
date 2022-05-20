@@ -36,12 +36,20 @@ if(isset($_SESSION['username'])){
                                 $prepare_result[$date][0][] = $row['s'];
                                 $prepare_result[$date][1][] = $row['message'];
                                 $prepare_result[$date][2][] = $time;
-                            } else{
-                        $prepare_result[$date] = [[$row['s']], [$row['message']], [$time]];
+                            } else {
+                                $prepare_result[$date] = [[$row['s']], [$row['message']], [$time]];
+                            }
+
                         }
-                    }
-                    $return_data = json_encode($prepare_result);
+                } else {
+                    $return_data = 0;
                 }
+                $sql = "SELECT username FROM users WHERE id = '".$_POST['id']."';";
+                $result = mysqli_query($link, $sql);
+                if(mysqli_num_rows($result) > 0) {
+                    $prepare_result[$_POST['id']] = mysqli_fetch_assoc($result);
+                }
+                $return_data = json_encode($prepare_result);
 
             } else if (isset($_POST['message'])){
                 $return_data = trim($_POST['message']);

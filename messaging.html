@@ -168,10 +168,10 @@
                 voluptate.
             </p>
         </div>
-        <div class="line"></div>
-        <footer class="footer my-3">
+        <div class="line" id="line"></div>
+        <footer class="footer my-3" id="box">
             <div class="input-group my-3">
-                <textarea class="form-control text-white border-dark" id="messagebox" placeholder="Messaging Person2"
+                <textarea class="form-control text-white border-dark" id="messagebox"
                           rows="2" maxlength="250"
                           style="resize: none; background-color: #444; overflow:hidden;"></textarea>
                 <div class="input-group-append">
@@ -238,16 +238,36 @@
                 get_message: 1
             },
             success: function (data) {
-                console.log(data)
-                returnData = JSON.parse(data);
-                console.log(returnData)
+                if (data !== "0") {
+                    returnData = JSON.parse(data);
+                    console.log(data)
+                    document.getElementById("line").style = "";
+                    document.getElementById("box").style = "";
+                    document.getElementById("messages").innerHTML = "<br><br>"
+                    document.getElementById("messagebox").placeholder = "Message " + Object.values(returnData[id]);
+                    for (let date in returnData) {
+                        if (date !== id.toString()) {
+                            let previous = "";
+                            document.getElementById("messages").innerHTML += "<h3 style='text-align: center'><span class='text-white mx-3'>" + date + "</span></h3>";
+                            for (let value = returnData[date][0].length - 1; value >= 0; value--) {
+                                let user = returnData[date][0][value];
+                                let message = returnData[date][1][value];
+                                let time = returnData[date][2][value];
 
-                for (date in returnData) {
-                    for (day in returnData[date]) {
-                        for (value in returnData[date][day]) {
-                            console.log(returnData[date][day][value])
+                                if (user !== previous) {
+                                    document.getElementById("messages").innerHTML += "<span class='text-white font-weight-bold' style='font-size: 125%'>" + user + " " + time + "</span>";
+                                    previous = user;
+                                }
+                                document.getElementById("messages").innerHTML += "<p class='text-white wrap' id='tmp'><\p>";
+                                document.getElementById("tmp").innerText = message;
+                                document.getElementById("tmp").removeAttribute("id");
+                            }
+
                         }
+                        $(document).scrollTop($(document).height());
                     }
+                } else {
+                    document.getElementById("messages").innerHTML = "<br><br><h1 style='text-align: center'><span class='text-white mx-3' >Conversation Starts Here</span></h1>"
                 }
             }
         });
