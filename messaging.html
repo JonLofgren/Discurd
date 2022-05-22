@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/messaging.css"/>
     <script src="js/jquery-3.6.0.js"></script>
     <script src="js/bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.js"></script>
 </head>
 
 <body>
@@ -106,68 +107,7 @@
                                 -->
             </div>
         </nav>
-        <div id="messages">
-            <br><br>
-            <h5 class="text-white font-weight-bold">Billy 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque odio soluta. Architecto atque, consectetur dolor doloremque ea ex laudantium
-                nemo neque nesciunt nulla odio provident quo similique, sint sunt ullam vero voluptatibus. Odio,
-                praesentium!</p>
-
-            <h5 class="text-white font-weight-bold">Joe 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque<br> ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, sint!<br>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita illo libero placeat quas recusandae
-                sequi. Accusantium dolore doloremque expedita explicabo inventore labore numquam rem repellat velit,
-                voluptates! Ad, consectetur culpa cum ipsum iure molestiae molestias officia omnis pariatur quas
-                voluptate.
-            </p>
-
-            <h5 class="text-white font-weight-bold">Billy 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque odio soluta. Architecto atque, consectetur dolor doloremque ea ex laudantium
-                nemo neque nesciunt nulla odio provident quo similique, sint sunt ullam vero voluptatibus. Odio,
-                praesentium!</p>
-
-            <h5 class="text-white font-weight-bold">Joe 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque<br> ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, sint!<br>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita illo libero placeat quas recusandae
-                sequi. Accusantium dolore doloremque expedita explicabo inventore labore numquam rem repellat velit,
-                voluptates! Ad, consectetur culpa cum ipsum iure molestiae molestias officia omnis pariatur quas
-                voluptate.
-            </p>
-
-            <h5 class="text-white font-weight-bold">Billy 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque odio soluta. Architecto atque, consectetur dolor doloremque ea ex laudantium
-                nemo neque nesciunt nulla odio provident quo similique, sint sunt ullam vero voluptatibus. Odio,
-                praesentium!</p>
-
-            <h5 class="text-white font-weight-bold">Joe 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque<br> ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, sint!<br>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita illo libero placeat quas recusandae
-                sequi. Accusantium dolore doloremque expedita explicabo inventore labore numquam rem repellat velit,
-                voluptates! Ad, consectetur culpa cum ipsum iure molestiae molestias officia omnis pariatur quas
-                voluptate.
-            </p>
-
-            <h5 class="text-white font-weight-bold">Billy 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque neque odio soluta. Architecto atque, consectetur dolor doloremque ea ex laudantium
-                nemo neque nesciunt nulla odio provident quo similique, sint sunt ullam vero voluptatibus. Odio,
-                praesentium!</p>
-
-            <h5 class="text-white font-weight-bold">Joe 05/03/22</h5>
-            <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis eum excepturi
-                illo ipsam itaque nequ ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, sint!
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita illo libero placeat quas recusandae
-                sequi. Accusantium dolore doloremque expedita explicabo inventore labore numquam rem repellat velit,
-                voluptates! Ad, consectetur culpa cum ipsum iure molestiae molestias officia omnis pariatur quas
-                voluptate.
-            </p>
-        </div>
+        <div id="messages"></div>
         <div class="line" id="line"></div>
         <footer class="footer my-3" id="box">
             <div class="input-group my-3">
@@ -181,7 +121,6 @@
         </footer>
     </div>
 </div>
-
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
         integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
@@ -235,12 +174,12 @@
             async: false,
             data: {
                 id: id,
-                get_message: 1
+                get_message: 1,
+                tz: Intl.DateTimeFormat().resolvedOptions().timeZone
             },
             success: function (data) {
                 if (data !== "0") {
                     returnData = JSON.parse(data);
-                    console.log(data)
                     document.getElementById("line").style = "";
                     document.getElementById("box").style = "";
                     document.getElementById("messages").innerHTML = "<br><br>"
@@ -252,7 +191,7 @@
                             for (let value = returnData[date][0].length - 1; value >= 0; value--) {
                                 let user = returnData[date][0][value];
                                 let message = returnData[date][1][value];
-                                let time = returnData[date][2][value];
+                                let time = moment(returnData[date][2][value], 'HH:mm:ss').format('h:mm A');
 
                                 if (user !== previous) {
                                     document.getElementById("messages").innerHTML += "<span class='text-white font-weight-bold' style='font-size: 125%'>" + user + " " + time + "</span>";
@@ -299,7 +238,7 @@
                 }
             });
 
-            document.getElementById("conversations").innerHTML += "<li><a href='#' className='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><button class='btn secondary_c text-white' id='tmp'></button></a></li>";
+            document.getElementById("conversations").innerHTML += "<li><a href='#' class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><button class='btn secondary_c text-white' id='tmp'></button></a></li>";
             document.getElementById("tmp").innerText = returnData[0];
             document.getElementById("tmp").removeAttribute("id");
             closeModal()

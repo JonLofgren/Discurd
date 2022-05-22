@@ -29,7 +29,10 @@ if(isset($_SESSION['username'])){
                 $result = mysqli_query($link, $sql);
                 if(mysqli_num_rows($result) > 0){
                     while($row = mysqli_fetch_assoc($result)) {
-                            $datetime = explode(" ", $row['date']);
+                            $dt = $row['date'];
+                            $newdt = ((new DateTime($dt))->setTimezone(new DateTimeZone($_POST['tz'])))->format("Y-m-d H:i:s");
+
+                            $datetime = explode(" ", $newdt);
                             $date = $datetime[0];
                             $time = $datetime[1];
                             if (isset($prepare_result[$date])) {
