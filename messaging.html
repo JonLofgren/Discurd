@@ -115,7 +115,7 @@
                           rows="2" maxlength="250"
                           style="resize: none; background-color: #444; overflow:hidden;"></textarea>
                 <div class="input-group-append">
-                    <button class="btn btn-dark btn-outline-info" onclick="appendMessages()"> Send</button>
+                    <button id="send" class="btn btn-dark btn-outline-info" onclick="appendMessages()"> Send</button>
                 </div>
             </div>
         </footer>
@@ -151,16 +151,13 @@
                 url: "php/message_handler.php",
                 async: false,
                 data: {
-                    message: message
+                    message: message,
+                    to: document.getElementById("send").value
                 },
                 success: function (data) {
-                    returnData = data;
+                    getMessages(document.getElementById("send").value)
                 }
             });
-            document.getElementById("messages").innerHTML += "<p class='text-white wrap' id='tmp'><\p>";
-            document.getElementById("tmp").innerText = returnData;
-            document.getElementById("tmp").removeAttribute("id");
-            document.getElementById("messagebox").value = "";
             $(document).scrollTop($(document).height());
         }
     }
@@ -184,11 +181,12 @@
                     document.getElementById("box").style = "";
                     document.getElementById("messages").innerHTML = "<br><br>"
                     document.getElementById("messagebox").placeholder = "Message " + Object.values(returnData[id]);
+                    document.getElementById("send").value = id;
                     for (let date in returnData) {
                         if (date !== id.toString()) {
                             let previous = "";
-                            document.getElementById("messages").innerHTML += "<h3 style='text-align: center'><span class='text-white mx-3'>" + date + "</span></h3>";
-                            for (let value = returnData[date][0].length - 1; value >= 0; value--) {
+                            document.getElementById("messages").innerHTML += "<h5 style='text-align: center'><span class='text-white mx-3'>" + (new Date(date)).toString().split(' ').slice(1,4).join(' ') + "</span></h5>";
+                            for (let value in returnData[date][0]) {
                                 let user = returnData[date][0][value];
                                 let message = returnData[date][1][value];
                                 let time = moment(returnData[date][2][value], 'HH:mm:ss').format('h:mm A');
@@ -203,11 +201,11 @@
                             }
 
                         }
-                        $(document).scrollTop($(document).height());
                     }
                 } else {
                     document.getElementById("messages").innerHTML = "<br><br><h1 style='text-align: center'><span class='text-white mx-3' >Conversation Starts Here</span></h1>"
                 }
+                $(document).scrollTop($(document).height());
             }
         });
 
@@ -265,7 +263,7 @@
             if (i === "0") {
                 document.getElementById("user").innerText = returnData[i];
             } else {
-                document.getElementById("conversations").innerHTML += "<li class='conversation_btn' onclick='getMessages(" + i + ")'><a class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><div class='secondary_c text-white'>" + returnData[i] + "</div></a>";
+                document.getElementById("conversations").innerHTML += "<li class='conversation_btn' onclick='getMessages(" + returnData[i][0] + ")'><a class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><div class='secondary_c text-white'>" + returnData[i][1] + "</div></a>";
             }
         }
         $(document).scrollTop($(document).height());

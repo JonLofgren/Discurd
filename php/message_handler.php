@@ -15,13 +15,11 @@ if(isset($_SESSION['username'])){
                 $sql = "SELECT username,id FROM (SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_1=u.id WHERE id_2 = '$user_id' UNION SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_2=u.id WHERE id_1 = '$user_id') a ORDER BY date DESC;";
                 $result = mysqli_query($link, $sql);
                 if(mysqli_num_rows($result) > 0){
+                    $prepare_result[] = $_SESSION['username'];
                     while($row = mysqli_fetch_assoc($result)){
-                        $prepare_result[$row['id']] = $row['username'];
+                        $prepare_result[] = [$row['id'], $row['username']];
                     }
-                    $prepare_result[0] = $_SESSION['username'];
                     $return_data = json_encode($prepare_result);
-                } else {
-                    //prompt to add friends
                 }
             } else if (isset($_POST['id']) && isset($_POST['get_message'])) {
                 $prepare_result = [];
@@ -54,10 +52,36 @@ if(isset($_SESSION['username'])){
                 }
                 $return_data = json_encode($prepare_result);
 
-            } else if (isset($_POST['message'])){
-                $return_data = trim($_POST['message']);
-            }
+            } else if (isset($_POST['message']) && isset($_SESSION['id']) && isset($_POST['to'])) {
+                $message = trim($_POST['message']);
+                $from = $_SESSION['id'];
+                $to = $_POST['to'];
 
+                if (strlen($message) <= 250) {
+                    if ($to > $from) {
+                        $sql = "UPDATE dm SET date = NOW() WHERE id_1 = '$from' AND id_2 = '$to';";
+                        mysqli_query($link, $sql);
+                    } elseif ($to < $from) {
+                        $sql = "UPDATE dm SET date = NOW() WHERE id_1 = '$to' AND id_2 = '$from';";
+                        mysqli_query($link, $sql);
+                    }
+
+                    $sql = "SELECT m_id FROM sent_messages ORDER BY m_id DESC LIMIT 1;";
+                    $result = mysqli_query($link, $sql);
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $next = $row['m_id'] + 1;
+                            $sql = "INSERT INTO messages VALUES ('$next', '$message', NOW());";
+                            mysqli_query($link, $sql);
+
+                            $sql = "INSERT INTO sent_messages (s_id, r_id, g_id, m_id) VALUES ('$from', '$to', null, '$next');";
+                            mysqli_query($link, $sql);
+
+                        }
+                    }
+                }
+                $return_data = $message;
+            }
         }
         echo $return_data;
     }
