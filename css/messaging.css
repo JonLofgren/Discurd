@@ -30,13 +30,31 @@ body {
     word-wrap: break-word;
 }
 
-.line {
+.line2 {
     width: 100%;
     height: 1px;
-    border-bottom: 1px dashed #ddd;
-    margin: 40px 0;
+    border-bottom: 1px dashed #666;
+    margin-bottom: 35px;
+    margin-top: -5px;
 }
 
+.line {
+     width: 100%;
+     height: 1px;
+     border-bottom: 1px dashed #ddd;
+     margin: 35px 0;
+ }
+
+.date {
+    font-size: 65%;
+    font-style: italic;
+    color: #a6a6a6;
+}
+
+.time {
+    font-style: italic;
+    color: #c5c5c5;
+}
 
 #sidebar {
     width: 250px;
