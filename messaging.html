@@ -142,7 +142,7 @@
                 },
                 success: function (data) {
                     if (data) {
-                        getMessages(document.getElementById("send").value, 1)
+                        getMessages(document.getElementById("send").value/*, 1*/)
                         document.getElementById("messagebox").value = "";
                         onload();
                     }
