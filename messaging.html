@@ -142,9 +142,7 @@
                 },
                 success: function (data) {
                     if (data) {
-                        getMessages(document.getElementById("send").value/*, 1*/)
                         document.getElementById("messagebox").value = "";
-                        onload();
                     }
                 }
             });
@@ -183,13 +181,44 @@
                         if (date !== id.toString()) {
                             let previous = "";
                             let newDate = new Date(date);
-                            document.getElementById("messages").innerHTML += "<h5 style='text-align: center'><span class='mx-3 date'>" + months[newDate.getUTCMonth()] + newDate.getUTCDate() + ", " + newDate.getUTCFullYear() + "</span></h5><div class='line2'></div>";
+                            let sameDate;
+
+                            let formattedDate = months[newDate.getUTCMonth()] + newDate.getUTCDate() + ", " + newDate.getUTCFullYear()
+                            if (last){
+                                let lastDate = document.getElementById("lastDate").innerText;
+                                if (lastDate === formattedDate) {
+                                    sameDate = 1;
+                                }
+                            } else {
+                                sameDate = 0;
+                            }
+                            if (document.getElementById("lastDate") && !sameDate){
+                                document.getElementById("lastDate").removeAttribute("id");
+                            }
+                            if (!sameDate) {
+                                document.getElementById("messages").innerHTML += "<h5 style='text-align: center'><span class='mx-3 date' id='lastDate'>" + formattedDate + "</span></h5><div class='line2'></div>";
+                            }
                             for (let value in returnData[date][0]) {
                                 let user = returnData[date][0][value];
                                 let message = returnData[date][1][value];
                                 let time = moment(returnData[date][2][value], 'HH:mm:ss').format('h:mm A');
+                                let sameUser;
+
+                                if (last) {
+                                    let lastUser = document.getElementById("lastUser").innerText;
+                                    if (user === lastUser) {
+                                        sameUser = 1;
+                                    }
+                                } else {
+                                    sameUser = 0;
+                                }
                                 if (user !== previous) {
-                                    document.getElementById("messages").innerHTML += "<div class='text-white font-weight-bold py-1'><span style='font-size: 125%'>" + user + "</span><span class='time'> " + time + "</span></div>";
+                                    if (document.getElementById("lastUser") && !sameUser){
+                                        document.getElementById("lastUser").removeAttribute("id");
+                                    }
+                                    if (!sameUser) {
+                                        document.getElementById("messages").innerHTML += "<div class='text-white font-weight-bold py-1'><span style='font-size: 125%' id='lastUser'>" + user + "</span><span class='time'> " + time + "</span></div>";
+                                    }
                                     previous = user;
                                 }
                                 document.getElementById("messages").innerHTML += "<p class='text-white wrap' id='tmp'><\p>";
@@ -289,14 +318,13 @@
                 if (returnData){
                     for (let user in returnData) {
                         if (returnData[user] === document.getElementById("send").value) {
-                            getMessages(returnData[user])
+                            getMessages(returnData[user], 1)
                         }
                     }
                     onload();
                 }
             }
         });
-
 
         tid = setTimeout(update, 1000);
     }

@@ -39,11 +39,11 @@ if(isset($_SESSION['username'])){
             } elseif (isset($_POST['id']) && isset($_POST['get_message']) && isset($_POST['tz']) && isset($_POST['last'])) {
                 $prepare_result = [];
 
-                $sql ="SELECT m.message, m.date, u1.username AS s, u2.username AS r FROM sent_messages sm INNER JOIN messages m ON sm.m_id=m.m_id JOIN users u1 ON sm.s_id=u1.id JOIN users u2 ON sm.r_id=u2.id WHERE (sm.r_id='$user_id' OR sm.s_id='$user_id') AND (sm.r_id='".$_POST['id']."' OR sm.s_id='".$_POST['id']."') ORDER BY date";
+                $sql ="SELECT m.message, m.date, u1.username AS s, u2.username AS r FROM sent_messages sm INNER JOIN messages m ON sm.m_id=m.m_id JOIN users u1 ON sm.s_id=u1.id JOIN users u2 ON sm.r_id=u2.id WHERE (sm.r_id='$user_id' OR sm.s_id='$user_id') AND (sm.r_id='".$_POST['id']."' OR sm.s_id='".$_POST['id']."') ";
                 if ($_POST['last'] === "0"){
-                    $sql .= ";";
+                    $sql .= "ORDER BY date;";
                 } else {
-                    $sql .= " DESC LIMIT 1;";
+                    $sql .= "AND date between (NOW() - INTERVAL 1 SECOND) AND NOW() ORDER BY date;";
                 }
                 $result = mysqli_query($link, $sql);
                 if(mysqli_num_rows($result) > 0){
