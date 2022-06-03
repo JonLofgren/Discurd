@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     //                              HTTPS!!!!!!!
     if($_SERVER["HTTP_REFERER"] == 'http://'.$_SERVER['HTTP_HOST'].'/Discurd/signup.html'){
         $username = trim($_POST["username"]);
-        if (strlen($username) > 3) {
+        if (strlen($username) > 3 && strlen(trim($_POST["password"])) > 6) {
             $password = password_hash(trim($_POST["password"]), PASSWORD_DEFAULT);
             $sql = "SELECT username FROM users WHERE username LIKE '$username';";
             $result = mysqli_query($link, $sql);

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Discurd</title>
     <link rel="stylesheet" href="css/bootstrap.css"/>
-    <link rel="icon" type="image/x-icon" href="/images/logo.png">
+    <link rel="icon" type="image/x-icon" href="/media/logo.png">
     <link rel="stylesheet" href="css/styles.css"/>
     <script src="js/jquery-3.6.0.js"></script>
 </head>
@@ -14,7 +14,7 @@
 <header style="position: sticky; top: 0; z-index: 5; width: 100%;">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="mr-auto order-0">
-            <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="" width="30"> Discurd</a>
+            <a class="navbar-brand" href="index.html"><img src="media/logo.png" alt="" width="30"> Discurd</a>
         </div>
         <div class="ml-auto">
             <ul class="navbar-nav mr-auto">
@@ -64,7 +64,7 @@
                                 </form>
                             </div>
                             <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                                <img src="images/signup.jpg"
+                                <img src="media/signup.jpg"
                                      class="img-fluid d-none d-md-block rounded" width="400" alt="">
                             </div>
                         </div>
@@ -80,17 +80,20 @@
         let password = document.getElementById("password").value;
         let repeat = document.getElementById("repeat").value;
 
+        if (username.length < 3) {
+            document.getElementById("username").className += " border-danger";
+        } else{
+            document.getElementById("username").className = "form-control";
+        }
 
-        if ((password !== repeat) || password.length === 0){
+        if ((password !== repeat) || password.length < 6){
             document.getElementById("password").className += " border-danger";
             document.getElementById("repeat").className += " border-danger";
-            return false
         } else {
             document.getElementById("password").className = "form-control";
             document.getElementById("repeat").className = "form-control";
         }
 
-        let returnData = [];
         $.ajax({
             type: "POST",
             url: "php/create_account.php",
@@ -100,19 +103,15 @@
                 password: password
             },
             success: function (data) {
-                returnData = parseInt(data);
+                if (parseInt(data)) {
+                    document.getElementById("username").className = "form-control";
+                    window.location.href = "login.html";
+                } else {
+                    document.getElementById("username").className += " border-danger";
+                }
             }
         });
-        if (returnData) {
-            document.getElementById("username").className = "form-control";
-            window.location.href = "login.html";
-        } else {
-            document.getElementById("username").className += " border-danger";
-        }
     }
-</script>
-<script>
-    document.getElementById("checkbox").addEventListener("click", _ => document.getElementById("checkbox").style.boxShadow = "none");
 </script>
 </body>
 </html>

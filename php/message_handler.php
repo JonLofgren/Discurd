@@ -35,6 +35,8 @@ if(isset($_SESSION['username'])){
                         $prepare_result[] = [$row['id'], $row['username']];
                     }
                     $return_data = json_encode($prepare_result);
+                } else {
+                    $return_data = json_encode([$_SESSION['username']]);
                 }
             } elseif (isset($_POST['id']) && isset($_POST['get_message']) && isset($_POST['tz']) && isset($_POST['last'])) {
                 $prepare_result = [];
@@ -128,6 +130,11 @@ if(isset($_SESSION['username'])){
                 } else {
                     $return_data = -1;
                 }
+            } elseif ($_POST['removeConvo'] && isset($_POST['id']) && is_numeric($_POST['id'])){
+                $id2 = $_POST['id'];
+                $sql = "DELETE FROM dm WHERE (id_1 = '$user_id' AND id_2 = '$id2') OR (id_1 = '$user_id' AND id_2 = '$id2');";
+                mysqli_query($link, $sql);
+                $return_data = 1;
             }
             echo $return_data;
         }

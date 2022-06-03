@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Discurd</title>
     <link rel="stylesheet" href="css/bootstrap.css"/>
-    <link rel="icon" type="image/x-icon" href="/images/logo.png">
+    <link rel="icon" type="image/x-icon" href="/media/logo.png">
     <link rel="stylesheet" href="css/messaging.css"/>
     <script src="js/jquery-3.6.0.js"></script>
     <script src="js/bootstrap.js"></script>
@@ -56,8 +56,28 @@
                 </div>
                 <div class="modal-footer" style="border-top: 1px solid #303136">
                     <h4 class="text-danger ml-auto" id="alert"></h4>
-                    <button type="button" id="group" class="btn btn-secondary" onclick="addConversation()">Create Group</button>
+                    <!--<button type="button" id="group" class="btn btn-secondary" onclick="addConversation()">Create Group</button>-->
                     <button type="button" id="add" class="btn btn-secondary" onclick="addConversation()">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="removeConvo" tabindex="-1" role="dialog" aria-labelledby="removeConvoLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header" style="border-bottom: 1px solid #303136">
+                    <h5 class="modal-title text-white" id="removeConvoLabel">Remove Conversation Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-white">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-white" id="removeConvoModal">
+                    Are you sure you want to remove this conversation?
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #303136">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" onclick="removeConvo()">Yes</button>
                 </div>
             </div>
         </div>
@@ -68,7 +88,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand btn text-white" type="button" id="sidebarCollapse">
                     <img
-                            src="images/logo.png"
+                            src="media/logo.png"
                             height="25"
                             alt=""
                             loading="lazy"
@@ -185,10 +205,17 @@
 
                             let formattedDate = months[newDate.getUTCMonth()] + newDate.getUTCDate() + ", " + newDate.getUTCFullYear()
                             if (last){
-                                let lastDate = document.getElementById("lastDate").innerText;
-                                if (lastDate === formattedDate) {
-                                    sameDate = 1;
+                                try {
+                                    let lastDate = document.getElementById("lastDate").innerText;
+                                    if (lastDate === formattedDate) {
+                                        sameDate = 1;
+                                    }
                                 }
+                                catch(err){
+                                    getMessages(id)
+                                    return
+                                }
+
                             } else {
                                 sameDate = 0;
                             }
@@ -294,7 +321,7 @@
                     if (i === "0") {
                         document.getElementById("user").innerText = returnData[i];
                     } else {
-                        document.getElementById("conversations").innerHTML += "<li class='conversation_btn' onclick='getMessages(" + returnData[i][0] + ")'><a class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><div class='secondary_c text-white'>" + returnData[i][1] + "</div></a>";
+                        document.getElementById("conversations").innerHTML += "<li class='conversation_btn' style='display: flex'><div class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent' onclick='getMessages(" + returnData[i][0] + ")'>" + returnData[i][1] + "</div><div class='remove_convo' onclick='$(\"#removeConvo\").modal(\"show\").val(" + returnData[i][0] + ")'>&times</div></li>";
                     }
                 }
                 $(document).scrollTop($(document).height());
@@ -303,9 +330,32 @@
     }
 </script>
 <script>
+    function removeConvo(){
+        let id = $('#removeConvo').val()
+
+        $.ajax({
+            type: "POST",
+            url: "php/message_handler.php",
+            async: false,
+            data: {
+                removeConvo: 1,
+                id: id
+            },
+            success: function (data) {
+                if (parseInt(data)){
+                    $('#removeConvo').modal('hide');
+                    onload();
+                }
+            }
+        });
+    }
+</script>
+<script>
     let tid = setTimeout(update, 1000);
     function update() {
+        let flag = 0;
         let returnData = [];
+
         $.ajax({
             type: "POST",
             url: "php/message_handler.php",
@@ -319,6 +369,8 @@
                     for (let user in returnData) {
                         if (returnData[user] === document.getElementById("send").value) {
                             getMessages(returnData[user], 1)
+                            flag = 1;
+
                         }
                     }
                     onload();
@@ -326,7 +378,11 @@
             }
         });
 
-        tid = setTimeout(update, 1000);
+        if (flag){
+            tid = setTimeout(update, 2000);
+        } else {
+            tid = setTimeout(update, 1000);
+        }
     }
 </script>
 </body>
