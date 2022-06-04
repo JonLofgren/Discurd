@@ -1,4 +1,111 @@
 .small-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    display: none;
+}
+
+body {
+    overflow-x: hidden;
+    background: #1e1e1e;
+}
+
+.text-color {
+    color: #e3e3e3;
+}
+
+.features-icons {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+    background: #191919;
+}
+
+.features-icons .features-icons-item {
+    max-width: 20rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon {
+    height: 7rem;
+}
+
+.features-icons .features-icons-item .features-icons-icon i {
+    font-size: 4.5rem;
+}
+
+header.masthead {
+    position: relative;
+    background: #343a40 url("../media/welcome.png") no-repeat;
+    background-size: cover;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+}
+
+header.masthead:before {
+    content: "";
+    position: absolute;
+    background-color: #000;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.4;
+}
+
+header.masthead .positioning {
+    padding-top: 3rem;
+    top: -100px;
+}
+
+@media (min-width: 768px) {
+    header.masthead {
+        padding-top: 15rem;
+        padding-bottom: 15rem;
+    }
+}
+
+@media (max-width: 768px) {
+    header.masthead .positioning {
+        padding-top: 3rem;
+        top: 115px;
+    }
+}
+
+.showcase .showcase-text {
+    padding: 3rem;
+}
+
+.showcase .showcase-img {
+    min-height: 30rem;
+    background-size: cover;
+}
+
+@media (min-width: 768px) {
+    .showcase .showcase-text {
+        padding: 7rem;
+    }
+}
+
+.call-to-action {
+    position: relative;
+    background: #343a40 url("../media/welcome.png") no-repeat;
+    background-size: cover;
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+}
+
+.call-to-action:before {
+    content: "";
+    position: absolute;
+    background-color: #000;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.4;
+}
+
+.call-to-action .btn-color{
+    background: #c38fff;
+}
+
+.call-to-action .btn-color:hover{
+    background: #a679dc;
+    transition: .25s;
 }

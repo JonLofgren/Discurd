@@ -6,12 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Discurd</title>
-    <link rel="stylesheet" href="css/bootstrap.css"/>
     <link rel="icon" type="image/x-icon" href="/media/logo.png">
+    <link rel="stylesheet" href="css/bootstrap.css"/>
     <link rel="stylesheet" href="css/messaging.css"/>
+    <script src="js/popper.min.js"></script>
     <script src="js/jquery-3.6.0.js"></script>
     <script src="js/bootstrap.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.js"></script>
+    <script src="js/moment.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
 </head>
 <body>
 <div>
@@ -19,9 +21,9 @@
         <div class="position-sticky">
             <div class="list-group list-group-flush mx-3 mt-4">
                 <h3><span class="text-white mx-3">Conversations</span></h3>
-                <ul id="conversations"></ul>
+                <ul id="conversations" class="list-unstyled"></ul>
             </div>
-            <ul class="list-unstyled CTAs">
+            <ul class="list-unstyled add_list">
                 <li>
                     <a class="btn text-white m-3" data-toggle="modal" data-target="#searchModal"
                        style="background: #3fb67f">Add Conversation
@@ -129,12 +131,6 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
-        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
-        crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
-
 <script type="text/javascript">
     $(document).ready(function () {
         $("#sidebar").mCustomScrollbar({
@@ -189,14 +185,20 @@
             success: function (data) {
                 if (data !== "0") {
                     returnData = JSON.parse(data);
-                    if (!last) {
-                        document.getElementById("messages").innerHTML = "<br><br>"
-                    }
-
                     document.getElementById("line").style = "";
                     document.getElementById("box").style = "";
                     document.getElementById("messagebox").placeholder = "Message " + Object.values(returnData[id]);
                     document.getElementById("send").value = id;
+
+                    if (!last) {
+                        if(sessionStorage.getItem(id) !== null){
+                            document.getElementById('messages').innerHTML = sessionStorage.getItem(id);
+                            $(document).scrollTop($(document).height());
+                            return
+                        }
+                        document.getElementById("messages").innerHTML = "<br><br>"
+                    }
+
                     for (let date in returnData) {
                         if (date !== id.toString()) {
                             let previous = "";
@@ -243,7 +245,7 @@
                                     if (document.getElementById("lastUser") && !sameUser){
                                         document.getElementById("lastUser").removeAttribute("id");
                                     }
-                                    if (!sameUser) {
+                                    if (!sameUser || !sameDate) {
                                         document.getElementById("messages").innerHTML += "<div class='text-white font-weight-bold py-1'><span style='font-size: 125%' id='lastUser'>" + user + "</span><span class='time'> " + time + "</span></div>";
                                     }
                                     previous = user;
@@ -258,6 +260,7 @@
                     document.getElementById("messages").innerHTML = "<br><br><h1 style='text-align: center'><span class='text-white mx-3' >Conversation Starts Here</span></h1>"
                 }
                 $(document).scrollTop($(document).height());
+                sessionStorage.setItem(id, document.getElementById('messages').innerHTML)
             }
         });
 
@@ -298,6 +301,7 @@
 </script>
 <script>
     window.onload = function() {
+        sessionStorage.clear();
         onload();
     }
 </script>
@@ -321,7 +325,7 @@
                     if (i === "0") {
                         document.getElementById("user").innerText = returnData[i];
                     } else {
-                        document.getElementById("conversations").innerHTML += "<li class='conversation_btn' style='display: flex'><div class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent' onclick='getMessages(" + returnData[i][0] + ")'>" + returnData[i][1] + "</div><div class='remove_convo' onclick='$(\"#removeConvo\").modal(\"show\").val(" + returnData[i][0] + ")'>&times</div></li>";
+                        document.getElementById("conversations").innerHTML += "<li class='conversation_btn'><div class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent' onclick='getMessages(" + returnData[i][0] + ")'>" + returnData[i][1] + "</div><div class='remove_convo' onclick='$(\"#removeConvo\").modal(\"show\").val(" + returnData[i][0] + ")'>&times</div></li>";
                     }
                 }
                 $(document).scrollTop($(document).height());
@@ -370,7 +374,8 @@
                         if (returnData[user] === document.getElementById("send").value) {
                             getMessages(returnData[user], 1)
                             flag = 1;
-
+                        } else {
+                            sessionStorage.removeItem(returnData[user]);
                         }
                     }
                     onload();

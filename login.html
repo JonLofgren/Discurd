@@ -79,8 +79,7 @@
     function signIn (){
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
-        if ((username.length > 0) && (password.length > 0)) {
-            let returnData;
+        if ((username.length > 3) && (password.length > 6)) {
             $.ajax({
                 type: "POST",
                 url: "php/signin.php",
@@ -90,16 +89,15 @@
                     password: password
                 },
                 success: function (data) {
-                    returnData = parseInt(data);
+                    if (parseInt(data)) {
+                        window.location.href = 'messaging.html';
+                    } else {
+                        document.getElementById("incorrect").innerText = "Incorrect username or password";
+                        document.getElementById("username").className += " border-danger";
+                        document.getElementById("password").className += " border-danger";
+                    }
                 }
             });
-            if (returnData) {
-                window.location.href = 'messaging.html';
-            } else {
-                document.getElementById("incorrect").innerText = "Incorrect username or password";
-                document.getElementById("username").className += " border-danger";
-                document.getElementById("password").className += " border-danger";
-            }
         } else {
             document.getElementById("incorrect").innerText = "Incorrect username or password";
             document.getElementById("username").className += " border-danger";

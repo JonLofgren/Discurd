@@ -86,7 +86,7 @@ body {
 
 
 
-ul.CTAs a {
+ul.add_list a {
     text-align: center;
     font-size: 0.9em !important;
     display: block;
@@ -106,6 +106,10 @@ ul.CTAs a {
 
 #content.active {
     width: 100%;
+}
+
+.conversation_btn {
+    display:flex;
 }
 
 .conversation_btn:hover {

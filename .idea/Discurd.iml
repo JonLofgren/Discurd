@@ -10,5 +10,6 @@
     <orderEntry type="library" name="popper.js" level="application" />
     <orderEntry type="library" name="malihu-custom-scrollbar-plugin" level="application" />
     <orderEntry type="library" name="moment.js" level="application" />
+    <orderEntry type="library" name="bootstrap-icons" level="application" />
   </component>
 </module>
