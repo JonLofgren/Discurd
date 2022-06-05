@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="css/styles.css"/>
     <script src="js/jquery-3.6.0.js"></script>
 </head>
-<body style="background-color: #eee;">
-<header style="position: sticky; top: 0; z-index: 5; width: 100%;">
+<body style="background-color: #191919;">
+<header class="header-styles">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="mr-auto order-0">
             <a class="navbar-brand" href="index.html"><img src="media/logo.png" alt="" width="30"> Discurd</a>
@@ -25,7 +25,8 @@
         </div>
     </nav>
 </header>
-<section class="vh-100">
+
+<!--<section class="vh-100">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-lg-12 col-xl-11">
@@ -73,44 +74,84 @@
             </div>
         </div>
     </div>
+</section>-->
+
+<section class="vh-100">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card text-color" style="border-radius: 1rem; background: #1e1e1e">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-5 mt-md-4 pb-5">
+                            <img src="media/logo.png" alt="" width="120">
+                            <h2 class="fw-bold mb-2 text-uppercase text-color pt-3">Signup</h2>
+                            <p class="text-color mb-5">Please enter a username and password!</p>
+                            <div class="form-outline form-white mb-4">
+                                <input type="text" id="username" class="form-control form-control-lg text-white" style="background-color: #1e1e1e" autocomplete="off"/>
+                                <label class="form-label" for="username">Username</label>
+                            </div>
+
+                            <div class="form-outline form-white mb-4">
+                                <input type="password" id="password" class="form-control form-control-lg text-white" style="background-color: #1e1e1e" />
+                                <label class="form-label" for="password">Password</label>
+                            </div>
+
+                            <div class="form-outline form-white mb-4">
+                                <input type="password" id="repeat" class="form-control form-control-lg text-white" style="background-color: #1e1e1e" />
+                                <label class="form-label" for="repeat">Repeat your password</label>
+                            </div>
+
+                            <button class="btn btn-outline-light btn-lg px-5" type="submit" onclick="register()">Register</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+
 <script>
-    function register(){
+    function register() {
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
         let repeat = document.getElementById("repeat").value;
+        let flag = 0;
 
         if (username.length < 3) {
             document.getElementById("username").className += " border-danger";
-        } else{
-            document.getElementById("username").className = "form-control";
+            flag = 1
+        } else {
+            document.getElementById("username").className = "form-control form-control-lg text-white";
         }
 
-        if ((password !== repeat) || password.length < 6){
+        if ((password !== repeat) || password.length < 6) {
             document.getElementById("password").className += " border-danger";
             document.getElementById("repeat").className += " border-danger";
+            flag = 1
         } else {
-            document.getElementById("password").className = "form-control";
-            document.getElementById("repeat").className = "form-control";
+            document.getElementById("password").className = "form-control form-control-lg text-white";
+            document.getElementById("repeat").className = "form-control form-control-lg text-white";
         }
 
-        $.ajax({
-            type: "POST",
-            url: "php/create_account.php",
-            async: false,
-            data: {
-                username: username,
-                password: password
-            },
-            success: function (data) {
-                if (parseInt(data)) {
-                    document.getElementById("username").className = "form-control";
-                    window.location.href = "login.html";
-                } else {
-                    document.getElementById("username").className += " border-danger";
+        if (!flag) {
+            $.ajax({
+                type: "POST",
+                url: "php/create_account.php",
+                async: false,
+                data: {
+                    username: username,
+                    password: password
+                },
+                success: function (data) {
+                    if (parseInt(data)) {
+                        document.getElementById("username").className = "form-control form-control-lg text-white";
+                        window.location.href = "login.html";
+                    } else {
+                        document.getElementById("username").className += " border-danger";
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 </script>
 </body>

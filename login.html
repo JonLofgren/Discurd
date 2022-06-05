@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="css/styles.css"/>
     <script src="js/jquery-3.6.0.js"></script>
 </head>
-<body style="background-color: #eee">
-<header style="position: sticky; top: 0; z-index: 5; width: 100%;">
+<body style="background-color: #191919">
+<header class="header-styles">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="mr-auto order-0">
             <a class="navbar-brand" href="index.html"><img src="media/logo.png" alt="" width="30"> Discurd</a>
@@ -25,38 +25,34 @@
         </div>
     </nav>
 </header>
-<section class="vh-100">
+<!--<section class="vh-100">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col col-xl-10">
-                <div class="card" style="border-radius: 1rem;">
-                    <div class="row g-0">
-                        <div class="col-md-6 col-lg-5 d-none d-md-block">
-                            <img src="media/login.jpg"
-                                 alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;"/>
-                        </div>
+                <div class="card" style="border-radius: 1rem; background: #1e1e1e">
+                    <div class="row">
                         <div class="col-md-6 col-lg-7 d-flex align-items-center">
                             <div class="card-body p-4 p-lg-5 text-black">
                                 <form>
                                     <div class="d-flex align-items-center mb-3 pb-1">
                                         <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
-                                        <span class="h1 fw-bold mb-0"><img src="media/logo.png" alt="" width="60"> Discurd</span>
+                                        <span class="h1 fw-bold mb-0 text-color"><img src="media/logo.png" alt="" width="60"> Discurd</span>
                                     </div>
 
-                                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your
+                                    <h5 class="fw-normal mb-3 pb-3 text-color" style="letter-spacing: 1px;">Sign into your
                                         account</h5>
 
                                     <span class="text-danger" id="incorrect"></span>
 
                                     <div class="form-outline mb-4">
                                         <input type="text" id="username" autocomplete="off" class="form-control form-control-lg"/>
-                                        <label class="form-label" for="username">Username</label>
+                                        <label class="form-label text-color" for="username">Username</label>
                                     </div>
 
                                     <div class="form-outline mb-3">
                                         <input type="password" id="password"
                                                class="form-control form-control-lg"/>
-                                        <label class="form-label" for="password">Password</label>
+                                        <label class="form-label text-color" for="password">Password</label>
                                     </div>
 
                                     <div class="pt-1 mb-4">
@@ -73,13 +69,48 @@
             </div>
         </div>
     </div>
+</section>-->
+
+<section class="vh-100">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card text-color" style="border-radius: 1rem; background: #1e1e1e">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-5 mt-md-4 pb-5">
+                            <img src="media/logo.png" alt="" width="120">
+                            <h2 class="fw-bold mb-2 text-uppercase text-color pt-3">Login</h2>
+                            <p class="text-color mb-5">Please enter your username and password!</p>
+                            <span class="text-danger" id="incorrect"></span>
+                            <div class="form-outline form-white mb-4">
+                                <input type="text" id="username" class="form-control form-control-lg text-white" style="background-color: #1e1e1e" autocomplete="off"/>
+                                <label class="form-label" for="username">Username</label>
+                            </div>
+
+                            <div class="form-outline form-white mb-4">
+                                <input type="password" id="password" class="form-control form-control-lg text-white" style="background-color: #1e1e1e" />
+                                <label class="form-label" for="password">Password</label>
+                            </div>
+                            <button class="btn btn-outline-light btn-lg px-5" type="submit" onclick="signIn()">Login</button>
+                        </div>
+
+                        <div>
+                            <p class="mb-0 text-color">Don't have an account? <a href="signup.html" class="fw-bold">Sign Up</a>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <script>
     function signIn (){
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
-        if ((username.length > 3) && (password.length > 6)) {
+        if ((username.length > 0) && (password.length > 6)) {
             $.ajax({
                 type: "POST",
                 url: "php/signin.php",
