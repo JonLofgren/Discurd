@@ -2,7 +2,18 @@
     display: none;
 }
 
-body {
+.small-scroll {
+    scrollbar-width: none;
+}
+
+.header-styles {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    width: 100%;
+}
+
+.index-body {
     overflow-x: hidden;
     background: #1e1e1e;
 }
@@ -99,13 +110,4 @@ header.masthead .positioning {
     top: 0;
     left: 0;
     opacity: 0.4;
-}
-
-.call-to-action .btn-color{
-    background: #c38fff;
-}
-
-.call-to-action .btn-color:hover{
-    background: #a679dc;
-    transition: .25s;
 }

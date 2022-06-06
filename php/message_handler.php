@@ -11,13 +11,16 @@ if(isset($_SESSION['username'])){
         if($_SERVER["HTTP_REFERER"] == 'http://'.$_SERVER['HTTP_HOST'].'/Discurd/messaging.html') {
             $user_id = $_SESSION['id'];
             if (isset($_POST['update']) && (int)$_POST['update']){
-                $sql = "SELECT id_1,id_2 FROM dm WHERE (id_1 = '$user_id' OR id_2 = '$user_id') AND date BETWEEN (NOW() - INTERVAL 1 SECOND) AND NOW();";
-                $result = mysqli_query($link, $sql);
+                $stmt = $link->prepare("SELECT id_1,id_2 FROM dm WHERE (id_1 = ? OR id_2 = ?) AND date BETWEEN (NOW() - INTERVAL 1 SECOND) AND NOW()");
+                $stmt->bind_param('ss', $user_id, $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
                 if(mysqli_num_rows($result) > 0){
                     while($row = mysqli_fetch_assoc($result)){
-                        if ($row['id_1'] === $_SESSION['id']) {
+                        if ((int)$row['id_1'] === $user_id) {
                             $prepare_result[] = $row['id_2'];
-                        } elseif ($row['id_2'] === $_SESSION['id']) {
+                        } elseif ((int)$row['id_2'] === $user_id) {
                             $prepare_result[] = $row['id_1'];
                         }
                     }
@@ -27,8 +30,14 @@ if(isset($_SESSION['username'])){
                 }
             } elseif (isset($_POST['load']) && (int)$_POST['load']){
                 $prepare_result = [];
-                $sql = "SELECT username,id FROM (SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_1=u.id WHERE id_2 = '$user_id' UNION SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_2=u.id WHERE id_1 = '$user_id') a ORDER BY date DESC;";
-                $result = mysqli_query($link, $sql);
+                //$sql = "SELECT username,id FROM (SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_1=u.id WHERE id_2 = '$user_id' UNION SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_2=u.id WHERE id_1 = '$user_id') a ORDER BY date DESC;";
+                //$result = mysqli_query($link, $sql);
+
+                $stmt = $link->prepare("SELECT username,id FROM (SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_1=u.id WHERE id_2 = ? UNION SELECT u.username,dm.date,u.id FROM dm LEFT JOIN users u ON dm.id_2=u.id WHERE id_1 = ?) a ORDER BY date DESC");
+                $stmt->bind_param('ss', $user_id, $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
                 if(mysqli_num_rows($result) > 0){
                     $prepare_result[] = $_SESSION['username'];
                     while($row = mysqli_fetch_assoc($result)){
@@ -41,13 +50,20 @@ if(isset($_SESSION['username'])){
             } elseif (isset($_POST['id']) && isset($_POST['get_message']) && isset($_POST['tz']) && isset($_POST['last'])) {
                 $prepare_result = [];
 
-                $sql ="SELECT m.message, m.date, u1.username AS s, u2.username AS r FROM sent_messages sm INNER JOIN messages m ON sm.m_id=m.m_id JOIN users u1 ON sm.s_id=u1.id JOIN users u2 ON sm.r_id=u2.id WHERE (sm.r_id='$user_id' OR sm.s_id='$user_id') AND (sm.r_id='".$_POST['id']."' OR sm.s_id='".$_POST['id']."') ";
+                //$sql ="SELECT m.message, m.date, u1.username AS s, u2.username AS r FROM sent_messages sm INNER JOIN messages m ON sm.m_id=m.m_id JOIN users u1 ON sm.s_id=u1.id JOIN users u2 ON sm.r_id=u2.id WHERE (sm.r_id='$user_id' OR sm.s_id='$user_id') AND (sm.r_id='".$_POST['id']."' OR sm.s_id='".$_POST['id']."') ";
+
+                $sql ="SELECT m.message, m.date, u1.username AS s, u2.username AS r FROM sent_messages sm INNER JOIN messages m ON sm.m_id=m.m_id JOIN users u1 ON sm.s_id=u1.id JOIN users u2 ON sm.r_id=u2.id WHERE (sm.r_id=? OR sm.s_id=?) AND (sm.r_id=? OR sm.s_id=?) ";
                 if ($_POST['last'] === "0"){
-                    $sql .= "ORDER BY date;";
+                    $sql .= "ORDER BY date";
                 } else {
-                    $sql .= "AND date between (NOW() - INTERVAL 1 SECOND) AND NOW() ORDER BY date;";
+                    $sql .= "AND date BETWEEN (NOW() - INTERVAL 1 SECOND) AND NOW() ORDER BY date";
                 }
-                $result = mysqli_query($link, $sql);
+                //$result = mysqli_query($link, $sql);
+                $stmt = $link->prepare($sql);
+                $stmt->bind_param('iiss', $user_id, $user_id, $_POST['id'], $_POST['id']);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
                 if(mysqli_num_rows($result) > 0){
                     while($row = mysqli_fetch_assoc($result)) {
                             $dt = $row['date'];
@@ -67,8 +83,14 @@ if(isset($_SESSION['username'])){
                 } else {
                     $return_data = 0;
                 }
-                $sql = "SELECT username FROM users WHERE id = '".$_POST['id']."';";
-                $result = mysqli_query($link, $sql);
+                //$sql = "SELECT username FROM users WHERE id = '".$_POST['id']."';";
+                //$result = mysqli_query($link, $sql);
+
+                $stmt = $link->prepare("SELECT username FROM users WHERE id = ?");
+                $stmt->bind_param('s', $_POST['id']);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
                 if(mysqli_num_rows($result) > 0) {
                     $prepare_result[$_POST['id']] = mysqli_fetch_assoc($result);
                 }
@@ -81,11 +103,19 @@ if(isset($_SESSION['username'])){
 
                 if (strlen($message) <= 250) {
                     if ($to > $from) {
-                        $sql = "UPDATE dm SET date = NOW() WHERE id_1 = '$from' AND id_2 = '$to';";
-                        mysqli_query($link, $sql);
+                        //$sql = "UPDATE dm SET date = NOW() WHERE id_1 = '$from' AND id_2 = '$to';";
+                        //mysqli_query($link, $sql);
+
+                        $stmt = $link->prepare("UPDATE dm SET date = NOW() WHERE id_1 = ? AND id_2 = ?");
+                        $stmt->bind_param('ss', $from, $to);
+                        $stmt->execute();
                     } elseif ($to < $from) {
-                        $sql = "UPDATE dm SET date = NOW() WHERE id_1 = '$to' AND id_2 = '$from';";
-                        mysqli_query($link, $sql);
+                        //$sql = "UPDATE dm SET date = NOW() WHERE id_1 = '$to' AND id_2 = '$from';";
+                        //mysqli_query($link, $sql);
+
+                        $stmt = $link->prepare("UPDATE dm SET date = NOW() WHERE id_1 = ? AND id_2 = ?");
+                        $stmt->bind_param('ss', $to, $from);
+                        $stmt->execute();
                     }
 
                     $sql = "SELECT m_id FROM sent_messages ORDER BY m_id DESC LIMIT 1;";
@@ -94,11 +124,17 @@ if(isset($_SESSION['username'])){
                         while ($row = mysqli_fetch_assoc($result)) {
                             $next = $row['m_id'] + 1;
                             $message = base64_encode($message);
-                            $sql = "INSERT INTO messages VALUES ('$next', '$message', NOW());";
-                            mysqli_query($link, $sql);
+                            //$sql = "INSERT INTO messages VALUES ('$next', '$message', NOW());";
+                            //mysqli_query($link, $sql);
+                            $stmt = $link->prepare("INSERT INTO messages VALUES (?, ?, NOW())");
+                            $stmt->bind_param('ss', $next, $message);
+                            $stmt->execute();
 
-                            $sql = "INSERT INTO sent_messages (s_id, r_id, g_id, m_id) VALUES ('$from', '$to', null, '$next');";
-                            mysqli_query($link, $sql);
+                            //$sql = "INSERT INTO sent_messages (s_id, r_id, g_id, m_id) VALUES ('$from', '$to', null, '$next');";
+                            //mysqli_query($link, $sql);
+                            $stmt = $link->prepare("INSERT INTO sent_messages (s_id, r_id, g_id, m_id) VALUES (?, ?, null, ?)");
+                            $stmt->bind_param('sss', $from, $to, $next);
+                            $stmt->execute();
                         }
                     }
                 }
@@ -107,22 +143,38 @@ if(isset($_SESSION['username'])){
                 $user = filter_var($_POST['user'], FILTER_SANITIZE_SPECIAL_CHARS);
                 $id = $_SESSION['id'];
 
-                $sql = "SELECT id FROM users WHERE username = '$user';";
-                $result = mysqli_query($link, $sql);
+                //$sql = "SELECT id FROM users WHERE username = '$user';";
+                //$result = mysqli_query($link, $sql);
+                $stmt = $link->prepare("SELECT id FROM users WHERE username = ?");
+                $stmt->bind_param('s', $user);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
                 if (mysqli_num_rows($result) > 0) {
                     $f_id = mysqli_fetch_assoc($result)['id'];
-                    $sql = "SELECT date FROM dm WHERE (id_1 = '$f_id' AND id_2 = '$id') OR (id_1 = '$id' AND id_2 = '$f_id');";
-                    $result = mysqli_query($link, $sql);
+                    //$sql = "SELECT date FROM dm WHERE (id_1 = '$f_id' AND id_2 = '$id') OR (id_1 = '$id' AND id_2 = '$f_id');";
+                    //$result = mysqli_query($link, $sql);
+                    $stmt = $link->prepare("SELECT date FROM dm WHERE (id_1 = ? AND id_2 = ?) OR (id_1 = ? AND id_2 = ?)");
+                    $stmt->bind_param('ssss', $f_id, $id, $id, $f_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+
                     if (mysqli_num_rows($result) > 0) {
                         $return_data = 0;
                     } else {
                         $return_data = $f_id;
                         if ($f_id > $id) {
-                            $sql = "INSERT INTO dm VALUES ('$id', '$f_id', NOW());";
-                            mysqli_query($link, $sql);
+                            //$sql = "INSERT INTO dm VALUES ('$id', '$f_id', NOW());";
+                            //mysqli_query($link, $sql);
+                            $stmt = $link->prepare("INSERT INTO dm VALUES (?, ?, NOW())");
+                            $stmt->bind_param('ss', $id, $f_id);
+                            $stmt->execute();
                         } elseif ($f_id < $id){
-                            $sql = "INSERT INTO dm VALUES ('$f_id', '$id', NOW());";
-                            mysqli_query($link, $sql);
+                            //$sql = "INSERT INTO dm VALUES ('$f_id', '$id', NOW());";
+                            //mysqli_query($link, $sql);
+                            $stmt = $link->prepare("INSERT INTO dm VALUES (?, ?, NOW())");
+                            $stmt->bind_param('ss', $f_id, $id);
+                            $stmt->execute();
                         } else {
                             $return_data = -2;
                         }
@@ -132,14 +184,18 @@ if(isset($_SESSION['username'])){
                 }
             } elseif ($_POST['removeConvo'] && isset($_POST['id']) && is_numeric($_POST['id'])){
                 $id2 = $_POST['id'];
-                $sql = "DELETE FROM dm WHERE (id_1 = '$user_id' AND id_2 = '$id2') OR (id_1 = '$user_id' AND id_2 = '$id2');";
-                mysqli_query($link, $sql);
+                //$sql = "DELETE FROM dm WHERE (id_1 = '$user_id' AND id_2 = '$id2') OR (id_1 = '$user_id' AND id_2 = '$id2');";
+                //mysqli_query($link, $sql);
+                $stmt = $link->prepare("DELETE FROM dm WHERE (id_1 = ? AND id_2 = ?) OR (id_1 = ? AND id_2 = ?)");
+                $stmt->bind_param('ssss', $user_id, $id2, $id2, $user_id);
+                $stmt->execute();
                 $return_data = 1;
             }
             echo $return_data;
+        } else {
+            echo -1;
         }
     }
 } else {
     echo -1;
 }
-

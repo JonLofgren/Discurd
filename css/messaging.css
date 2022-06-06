@@ -10,12 +10,13 @@ body::-webkit-scrollbar-thumb {
     background-color: darkgrey;
     outline: 1px solid slategrey;
 }
-body {
-    background: #35383d;
-}
 
 .secondary_c {
     background: #303136;
+}
+
+body {
+    background: #35383d;
 }
 
 .conversation_btn:hover .remove_convo {

@@ -9,15 +9,19 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         session_destroy();
         $return_data = 0;
         $username = $_POST['username'];
-        $sql = "SELECT username,password,id FROM users WHERE username = '$username';";
-        $result = mysqli_query($link, $sql);
+
+        $stmt = $link->prepare("SELECT username,password,id FROM users WHERE username = ?");
+        $stmt->bind_param('s', $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
         if (mysqli_num_rows($result) > 0){
             while($row = mysqli_fetch_assoc($result)){
                 if (password_verify(trim($_POST["password"]), $row['password'])){
                     $return_data = 1;
                     session_start();
                     $_SESSION['username'] = $row['username'];
-                    $_SESSION['id'] = $row['id'];
+                    $_SESSION['id'] = (int)$row['id'];
                 }
             }
         }

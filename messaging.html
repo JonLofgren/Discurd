@@ -171,6 +171,18 @@
 
     function getMessages(id,last = 0) {
         let returnData = [];
+        let flag = 0;
+
+        if (!last) {
+            if(sessionStorage.getItem(id) !== null){
+                document.getElementById('messages').innerHTML = sessionStorage.getItem(id);
+                $(document).scrollTop($(document).height());
+                flag = 1;
+            }
+            if(!flag){
+                document.getElementById("messages").innerHTML = "<br><br>"
+            }
+        }
 
         $.ajax({
             type: "POST",
@@ -190,13 +202,8 @@
                     document.getElementById("messagebox").placeholder = "Message " + Object.values(returnData[id]);
                     document.getElementById("send").value = id;
 
-                    if (!last) {
-                        if(sessionStorage.getItem(id) !== null){
-                            document.getElementById('messages').innerHTML = sessionStorage.getItem(id);
-                            $(document).scrollTop($(document).height());
-                            return
-                        }
-                        document.getElementById("messages").innerHTML = "<br><br>"
+                    if (flag){
+                        return
                     }
 
                     for (let date in returnData) {
@@ -214,10 +221,10 @@
                                     }
                                 }
                                 catch(err){
+                                    sessionStorage.removeItem(id);
                                     getMessages(id)
                                     return
                                 }
-
                             } else {
                                 sameDate = 0;
                             }
@@ -232,7 +239,6 @@
                                 let message = returnData[date][1][value];
                                 let time = moment(returnData[date][2][value], 'HH:mm:ss').format('h:mm A');
                                 let sameUser;
-
                                 if (last) {
                                     let lastUser = document.getElementById("lastUser").innerText;
                                     if (user === lastUser) {
@@ -256,8 +262,6 @@
                             }
                         }
                     }
-                } else {
-                    document.getElementById("messages").innerHTML = "<br><br><h1 style='text-align: center'><span class='text-white mx-3' >Conversation Starts Here</span></h1>"
                 }
                 $(document).scrollTop($(document).height());
                 sessionStorage.setItem(id, document.getElementById('messages').innerHTML)
@@ -288,6 +292,8 @@
                         document.getElementById("alert").innerText = "Could not find user!";
                     } else if (data === "0") {
                         document.getElementById("alert").innerText = "User already added!";
+                    } else if (data === "-2"){
+                        document.getElementById("alert").innerText = "Can not add yourself!";
                     } else {
                         closeModal()
                         document.getElementById("conversations").innerHTML = "<li class='conversation_btn' onclick='getMessages(" + data + ")'><a class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><div class='secondary_c text-white'>" + friend + "</div></a>" + document.getElementById("conversations").innerHTML;
@@ -371,7 +377,7 @@
                 returnData = JSON.parse(data);
                 if (returnData){
                     for (let user in returnData) {
-                        if (returnData[user] === document.getElementById("send").value) {
+                        if (returnData[user] === parseInt(document.getElementById("send").value)) {
                             getMessages(returnData[user], 1)
                             flag = 1;
                         } else {
