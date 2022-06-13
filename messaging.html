@@ -17,7 +17,7 @@
 </head>
 <body>
 <div>
-    <nav id="sidebar" class="secondary_c">
+    <nav id="sidebar" class="secondary-color">
         <div class="position-sticky">
             <div class="list-group list-group-flush mx-3 mt-4">
                 <h3><span class="text-white mx-3">Conversations</span></h3>
@@ -296,7 +296,7 @@
                         document.getElementById("alert").innerText = "Can not add yourself!";
                     } else {
                         closeModal()
-                        document.getElementById("conversations").innerHTML = "<li class='conversation_btn' onclick='getMessages(" + data + ")'><a class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent'><div class='secondary_c text-white'>" + friend + "</div></a>" + document.getElementById("conversations").innerHTML;
+                        document.getElementById("conversations").innerHTML = "<li class='conversation_btn' onclick='getMessages(" + data + ")'><a class='list-group-item list-group-item-action py-2 secondary-color text-white bg-transparent'><div class='secondary-color text-white'>" + friend + "</div></a>" + document.getElementById("conversations").innerHTML;
                     }
                 }
             });
@@ -331,7 +331,7 @@
                     if (i === "0") {
                         document.getElementById("user").innerText = returnData[i];
                     } else {
-                        document.getElementById("conversations").innerHTML += "<li class='conversation_btn'><div class='list-group-item list-group-item-action py-2 secondary_c text-white bg-transparent' onclick='getMessages(" + returnData[i][0] + ")'>" + returnData[i][1] + "</div><div class='remove_convo' onclick='$(\"#removeConvo\").modal(\"show\").val(" + returnData[i][0] + ")'>&times</div></li>";
+                        document.getElementById("conversations").innerHTML += "<li class='conversation_btn'><div class='list-group-item list-group-item-action py-2 secondary-color text-white bg-transparent' onclick='getMessages(" + returnData[i][0] + ")'>" + returnData[i][1] + "</div><div class='remove_convo' onclick='$(\"#removeConvo\").modal(\"show\").val(" + returnData[i][0] + ")'>&times</div></li>";
                     }
                 }
                 $(document).scrollTop($(document).height());

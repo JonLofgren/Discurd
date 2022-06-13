@@ -22,6 +22,16 @@
     color: #e3e3e3;
 }
 
+.text-background {
+    font-weight: bold;
+    box-shadow: 0 10px 40px 20px rgba(0,0,0,.5);
+    background: rgba(0,0,0,0.45);
+    width: fit-content;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%); border-radius: 10px
+}
+
 .features-icons {
     padding-top: 7rem;
     padding-bottom: 7rem;
